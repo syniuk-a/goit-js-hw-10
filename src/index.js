@@ -1,8 +1,8 @@
 import './css/styles.css';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 import Notiflix from 'notiflix';
 import 'notiflix/dist/notiflix-3.2.5.min.css';
-import { fetchCountries } from './fetchCountries';
+import { fetchCountries } from './js/fetchCountries.js';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -36,7 +36,7 @@ searchBox.addEventListener('input', debounce(() => {
   if (name === '') {
     return;
   }
-  fetchCountries(name).this(showCountry).catch(showError);
+  fetchCountries(name).then(showCountry).catch(showError);
 }, DEBOUNCE_DELAY));
 
 function showError(error) {
@@ -47,7 +47,7 @@ function showCountry(country) {
   if (country.status === 404) {
     return Notiflix.Notify.failure("Oops, there is no country with that name");
   } else if (country.length > 10) {
-    return Notiflix.Notify.info("Too many matches found. Please enter a more specific name");
+    return Notiflix.Notify.info('Too many matches found. Please enter a more specific name');
   } else if (country.length >= 2 && country.length <= 10) {
     return createCountry(country)
   } else {
