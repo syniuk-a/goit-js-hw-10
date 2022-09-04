@@ -17,3 +17,40 @@ function createCountry(country) {
 
   countryInfo.innerHTML = markup;
 };
+
+function createMarkup(data) {
+  const country = data.map(({ name, flags, capital, population, languages }) => {
+    return `<h1><img src="${flags.svg}" class="country" alt="flag" width="30px"/>${name.official}</h1>
+        <ul>
+            <li>Capital:<span>${capital}</span></li>
+            <li>Population:<span>${population}</span></li>
+            <li>Languages:<span>${Object.values(languages).join(', ')}</span></li>
+        </ul>`}).join('');
+  
+  countryList.innerHTML = country;
+  countryInfo.innerHTML = '';
+};
+
+searchBox.addEventListener('input', debounce(() => {
+  const name = searchBox.value.trim();
+  if (name === '') {
+    return;
+  }
+  fetchCountries(name).this(showCountry).catch(showError);
+}, DEBOUNCE_DELAY));
+
+function showError(error) {
+  console.log(error);
+};
+
+function showCountry(country) {
+  if (country.status === 404) {
+    return Notiflix.Notify.failure("Oops, there is no country with that name");
+  } else if (country.length > 10) {
+    return Notiflix.Notify.info("Too many matches found. Please enter a more specific name");
+  } else if (country.length >= 2 && country.length <= 10) {
+    return createCountry(country)
+  } else {
+    return createMarkup(country)
+  }
+};
